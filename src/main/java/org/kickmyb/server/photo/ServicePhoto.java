@@ -55,6 +55,10 @@ public class ServicePhoto {
         MTask element = repo.findById(elementID).get();
         return repoPics.findByTask(element).get();
     }*/
+    @Transactional
+    public void deletePhoto(Long Id){
+
+    }
 
     public MPhoto getFile(Long elementID) {
         return repoPics.findById(elementID).get();
