@@ -57,7 +57,11 @@ public class ServicePhoto {
     }*/
     @Transactional
     public void deletePhoto(Long Id){
-
+        try {
+            MPhoto photoAYeet = getFile(Id);
+            repoPics.delete(photoAYeet);
+        } catch(Exception e){}
+        
     }
 
     public MPhoto getFile(Long elementID) {
