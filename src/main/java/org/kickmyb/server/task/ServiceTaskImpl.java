@@ -185,7 +185,17 @@ public class ServiceTaskImpl implements ServiceTask {
 
     @Override
     public void deleteTask(Long id, MUser user) {
-
+        MTask element = user.tasks.stream().filter(elt -> elt.id == id).findFirst().get();
+        if(element.photo == null){
+            repo.delete(element);
+        }else {
+            try{
+                servicePhoto.deletePhoto(element.photo.id);
+                repo.delete(element);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }
