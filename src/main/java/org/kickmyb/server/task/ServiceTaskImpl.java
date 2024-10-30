@@ -188,26 +188,20 @@ public class ServiceTaskImpl implements ServiceTask {
     @Override
     public void deleteTask(Long id, MUser user) {
         MTask element = user.tasks.stream().filter(elt -> elt.id == id).findFirst().get();
-        if(element.photo == null){
-            user.tasks.remove(element);
-            repo.delete(element);
-        }else {
+        if(element.photo != null){
             try{
                 MPhoto photoAYeet = getFile(element.photo.id);
-                element.photo = null; // Clear the reference to photo first
-                repo.save(element); // Save the element without photo
-
-                photoAYeet.task = null; // Break reference from photo to task
-                repoPics.save(photoAYeet); // Save the detached photo
-
-                // Now delete the photo and then the task
+                element.photo = null;
+                repo.save(element);
+                photoAYeet.task = null;
+                repoPics.save(photoAYeet);
                 repoPics.delete(photoAYeet);
-                user.tasks.remove(element);
-                repo.delete(element);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
+        user.tasks.remove(element);
+        repo.delete(element);
     }
 
     public MPhoto getFile(Long elementID) {
