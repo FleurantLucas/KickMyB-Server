@@ -38,7 +38,7 @@ class ServiceAccountTests {
 					req.password = "test";
 					serviceAccount.signup(req);
 					serviceAccount.signup(req);
-		}, "NumberFormatException was expected");
+				}, "NumberFormatException was expected");
 
 
 

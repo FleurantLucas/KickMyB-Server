@@ -3,6 +3,8 @@ package org.kickmyb.server.task;
 import org.joda.time.DateTime;
 import org.kickmyb.server.account.MUser;
 import org.kickmyb.server.account.MUserRepository;
+import org.kickmyb.server.photo.MPhoto;
+import org.kickmyb.server.photo.MPhotoRepository;
 import org.kickmyb.server.photo.ServicePhoto;
 import org.kickmyb.transfer.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ public class ServiceTaskImpl implements ServiceTask {
     @Autowired MTaskRepository repo;
     @Autowired MProgressEventRepository repoProgressEvent;
     @Autowired
-    ServicePhoto servicePhoto;
+    MPhotoRepository repoPics;
 
     private int percentage(Date start, Date current, Date end){
         if (current.after(end)) return 100;
@@ -187,15 +189,29 @@ public class ServiceTaskImpl implements ServiceTask {
     public void deleteTask(Long id, MUser user) {
         MTask element = user.tasks.stream().filter(elt -> elt.id == id).findFirst().get();
         if(element.photo == null){
+            user.tasks.remove(element);
             repo.delete(element);
         }else {
             try{
-                servicePhoto.deletePhoto(element.photo.id);
+                MPhoto photoAYeet = getFile(element.photo.id);
+                element.photo = null; // Clear the reference to photo first
+                repo.save(element); // Save the element without photo
+
+                photoAYeet.task = null; // Break reference from photo to task
+                repoPics.save(photoAYeet); // Save the detached photo
+
+                // Now delete the photo and then the task
+                repoPics.delete(photoAYeet);
+                user.tasks.remove(element);
                 repo.delete(element);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public MPhoto getFile(Long elementID) {
+        return repoPics.findById(elementID).get();
     }
 
 }
