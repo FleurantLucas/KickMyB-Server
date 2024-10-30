@@ -83,7 +83,7 @@ public class ControllerTask {
         return serviceTask.userFromUsername(ud.getUsername());
     }
 
-    @GetMapping("/api/delete")
+    @GetMapping("/api/delete/{id}")
     public @ResponseBody void TaskDelete(@PathVariable long id) {
         System.out.println("KICKB SERVER : Delete Task  with cookie ");
         ConfigHTTP.attenteArticifielle();
