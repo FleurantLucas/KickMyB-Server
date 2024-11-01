@@ -190,6 +190,7 @@ public class ServiceTaskImpl implements ServiceTask {
         MTask element = user.tasks.stream().filter(elt -> elt.id == id).findFirst().get();
         if(element.photo != null){
             try{
+                System.out.println("KICKB SERVER : Deleting Photo ");
                 MPhoto photoAYeet = getFile(element.photo.id);
                 element.photo = null;
                 repo.save(element);
